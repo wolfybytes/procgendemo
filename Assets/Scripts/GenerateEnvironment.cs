@@ -42,13 +42,17 @@ public class GenerateEnvironment : MonoBehaviour
         Biome currentBiome = biomes[Random.Range(0, biomes.Count)];
         for (int i = 0; i < numObjects; i++)
         {
-            GameObject newObj = Instantiate(currentBiome.GetRandomObject(), new Vector3(Random.Range(spawnRange.x, spawnRange.y), 0f, Random.Range(spawnRange.x, spawnRange.y)), new Quaternion(0f, Random.Range(0f, 1f), 0f, 0f), gameObject.transform);
+            GameObject newObj = Instantiate(currentBiome.GetRandomObject(), 
+                new Vector3(Random.Range(spawnRange.x, spawnRange.y), 0f, Random.Range(spawnRange.x, spawnRange.y)), 
+                new Quaternion(0f, Random.Range(0f, 1f), 0f, 0f), gameObject.transform);
             newObj.transform.localScale *= Random.Range(1f, 2f);
             environment.Add(newObj);
         }
         for (int i = 0; i < numDetails; i++)
         {
-            GameObject newObj = Instantiate(currentBiome.GetRandomDetail(), new Vector3(Random.Range(spawnRange.x, spawnRange.y), 0f, Random.Range(spawnRange.x, spawnRange.y)), new Quaternion(0f, Random.Range(0f, 1f), 0f, 0f), gameObject.transform);
+            GameObject newObj = Instantiate(currentBiome.GetRandomDetail(), 
+                new Vector3(Random.Range(spawnRange.x, spawnRange.y), 0f, Random.Range(spawnRange.x, spawnRange.y)), 
+                new Quaternion(0f, Random.Range(0f, 1f), 0f, 0f), gameObject.transform);
             newObj.transform.localScale *= Random.Range(1f, 1.5f);
             environment.Add(newObj);
         }
