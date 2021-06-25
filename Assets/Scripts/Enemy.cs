@@ -4,11 +4,15 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+    public delegate void OnStateChange();
+    public OnStateChange onDeath;
+
     private float timer = 0f;
     private float timeToMatchMovementDirection = .5f;
     private Quaternion lookDirection;
     private Vector3 lastShot;
 
+    public int health = 2;
     [Header("Movement")]
     private CharacterController character;
     public Vector3 moveDirection;
@@ -41,5 +45,19 @@ public class Enemy : MonoBehaviour
 
         target = GameObject.FindGameObjectWithTag("Player");
         return false;
+    }
+
+    public void Hit()
+    {
+        health -= 1;
+        if (health <= 0)
+            Die();
+    }
+
+    public void Die()
+    {
+        onDeath?.Invoke();
+
+        gameObject.SetActive(false);
     }
 }

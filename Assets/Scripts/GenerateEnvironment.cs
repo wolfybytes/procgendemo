@@ -14,9 +14,11 @@ public class GenerateEnvironment : MonoBehaviour
     public Material onLevelMat;
     public Material offLevelMat;
 
-    private void Start()
+    public void GenerateFromSeed(int seed)
     {
-        
+        this.seed = seed;
+
+        GenerateLevel();
     }
 
     private void Update()
@@ -25,11 +27,6 @@ public class GenerateEnvironment : MonoBehaviour
             GenerateLevel();
         if (Input.GetKeyDown(KeyCode.H))
             GenerateSeed();
-    }
-
-    public void GenerateSeed()
-    {
-        seed = Random.Range(0, 99999);
     }
 
     public void GenerateLevel()
@@ -45,13 +42,13 @@ public class GenerateEnvironment : MonoBehaviour
         Biome currentBiome = biomes[Random.Range(0, biomes.Count)];
         for (int i = 0; i < numObjects; i++)
         {
-            GameObject newObj = Instantiate(currentBiome.GetRandomObject(), new Vector3(Random.Range(spawnRange.x, spawnRange.y), 0f, Random.Range(spawnRange.x, spawnRange.y)), new Quaternion(0f, Random.Range(0f, 1f), 0f, 0f), gameObject.transform.parent);
+            GameObject newObj = Instantiate(currentBiome.GetRandomObject(), new Vector3(Random.Range(spawnRange.x, spawnRange.y), 0f, Random.Range(spawnRange.x, spawnRange.y)), new Quaternion(0f, Random.Range(0f, 1f), 0f, 0f), gameObject.transform);
             newObj.transform.localScale *= Random.Range(1f, 2f);
             environment.Add(newObj);
         }
         for (int i = 0; i < numDetails; i++)
         {
-            GameObject newObj = Instantiate(currentBiome.GetRandomDetail(), new Vector3(Random.Range(spawnRange.x, spawnRange.y), 0f, Random.Range(spawnRange.x, spawnRange.y)), new Quaternion(0f, Random.Range(0f, 1f), 0f, 0f), gameObject.transform.parent);
+            GameObject newObj = Instantiate(currentBiome.GetRandomDetail(), new Vector3(Random.Range(spawnRange.x, spawnRange.y), 0f, Random.Range(spawnRange.x, spawnRange.y)), new Quaternion(0f, Random.Range(0f, 1f), 0f, 0f), gameObject.transform);
             newObj.transform.localScale *= Random.Range(1f, 1.5f);
             environment.Add(newObj);
         }
@@ -59,6 +56,11 @@ public class GenerateEnvironment : MonoBehaviour
         onLevelMat.SetColor("_EmissionColor", currentBiome.onLevelColor);
         offLevelMat.color = currentBiome.offLevelColor;
         offLevelMat.SetColor("_EmissionColor", currentBiome.offLevelColor);
+    }
+
+    public void GenerateSeed()
+    {
+        seed = Random.Range(0, 99999);
     }
 }
 
