@@ -6,14 +6,25 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     private float timer = 0f;
-    private float timeToMatchMovementDirection = 2f;
+    private float timeToMatchMovementDirection = .5f;
     private Quaternion lookDirection;
     private Vector3 lastShot;
 
+    [Header("Movement")]
     private CharacterController character;
     public Vector3 moveDirection;
-    public Vector3 shotDirection;
     public float speed = 3f;
+
+    [Header("Bullet")]
+    public Vector3 shotDirection;
+    public List<GameObject> bullets;
+    public int bulletIndex = 0;
+    private GameObject currentBullet;
+    public Transform bulletSource;
+    public float bulletSpeed = 20f;
+    public float frequency = .5f;
+    private float bulletTimer;
+    private bool bulletIsQueued;
 
     private void Start()
     {
@@ -26,17 +37,21 @@ public class Player : MonoBehaviour
     {
         moveDirection.x = (Input.GetKey(KeyCode.A)) ? -1 : (Input.GetKey(KeyCode.D)) ? 1 : 0;
         moveDirection.z = (Input.GetKey(KeyCode.S)) ? -1 : (Input.GetKey(KeyCode.W)) ? 1 : 0;
-        
+
         shotDirection.x = (Input.GetKey(KeyCode.LeftArrow)) ? -1 : (Input.GetKey(KeyCode.RightArrow)) ? 1 : 0;
         shotDirection.z = (Input.GetKey(KeyCode.DownArrow)) ? -1 : (Input.GetKey(KeyCode.UpArrow)) ? 1 : 0;
-        
+
         // Update move direction
         character.SimpleMove(moveDirection * speed);
         // Update look direction
         timer -= Time.deltaTime;
-        if (shotDirection.x != 0 || shotDirection.z != 0) 
+
+        // Update bullet shots
+        bulletTimer -= Time.deltaTime;
+        if (shotDirection.x != 0 || shotDirection.z != 0)
         {
-            Shoot(shotDirection);
+            if (bulletTimer < 0)
+                QueueShot(shotDirection);
         }
 
         if (UpdateDirection())
@@ -49,6 +64,9 @@ public class Player : MonoBehaviour
             lookDirection = Quaternion.LookRotation(lastShot);
         }
         transform.rotation = lookDirection;
+
+        if (bulletIsQueued)
+            Shoot(shotDirection);
     }
 
     private bool UpdateDirection()
@@ -60,9 +78,22 @@ public class Player : MonoBehaviour
         return false;
     }
 
-    private void Shoot(Vector3 shotDirection)
+    private void QueueShot(Vector3 shotDirection)
     {
         lastShot = shotDirection;
         timer = timeToMatchMovementDirection;
+        bulletIsQueued = true;
+    }
+
+    private void Shoot(Vector3 shotDirection)
+    {
+        bulletTimer = frequency;
+        currentBullet = bullets[bulletIndex];
+        currentBullet.SetActive(true);
+        currentBullet.transform.SetPositionAndRotation(bulletSource.position, new Quaternion(0f, 0f, 0f, 0f));
+        currentBullet.GetComponent<Rigidbody>().velocity = Vector3.zero;
+        currentBullet.GetComponent<Rigidbody>().AddForce(lastShot * bulletSpeed, ForceMode.Impulse);
+        bulletIsQueued = false;
+        bulletIndex = (bulletIndex + 1 >= bullets.Count) ? 0 : bulletIndex + 1;
     }
 }

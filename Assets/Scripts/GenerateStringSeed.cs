@@ -9,7 +9,7 @@ public class GenerateStringSeed : MonoBehaviour
     public int seed;
     public int[] values;
 
-    void Start()
+    private void Start()
     {
         Random.seed = seed;
         values = new int[num];
